@@ -79,7 +79,6 @@ namespace juego
 
     void chequearMejorJugador(utils::Jugador *jug)
     {
-        cout << pdvMejor << " " << jug->puntajesFinales.pdv;
         if (jug->puntajesFinales.pdv > pdvMejor)
         {
             aliasMejor = jug->alias;
@@ -157,8 +156,7 @@ namespace juego
 
         chequearMejorJugador(jug1->puntajesFinales.pdv > jug2->puntajesFinales.pdv ? jug1 : jug2);
 
-        cout << "En 10 segundos volvemos al menú principal" << endl;
-        sleep(10);
+        utils::pausaVolverMenuPrincipal();
     }
 
     void inicializarJugadores()
@@ -199,6 +197,9 @@ namespace juego
             // Acumula los puntos de la ronda.
             int acumTotal = 0;
 
+            // Primer lanzamiento. Ver explicación mas abajo...
+            bool primerLanzamiento = true;
+
             do
             {
                 // Actualizo contador de lanzamientos en ronda actual.
@@ -232,6 +233,25 @@ namespace juego
                     // Lanzo el dado.
                     lanzamientos[l] = lanzarDado();
 
+                    /**
+                     * Esto no estaba en el enunciado original, pero me pareció oportuno no permitir que
+                     * se pierda el turno en el primer lanzamiento. Asegurando que no ocurra el siguiente escenario:
+                     *  jug1 lanza -> sale 1 -> cede el turno a jug2.
+                     *  jug2 lanza -> sale 1 -> cede el turno a jug1.
+                     *  jug1 lanza -> sale 1 -> cede el turno a jug2.
+                     *  jug2 lanza -> sale 1 -> cede el turno a jug1.
+                     *  jug1 lanza -> sale 1 -> cede el turno a jug2.
+                     *  etc...
+                     *  (Me ha ocurrido varias veces este escenario cuando probaba el juego)
+                     */
+                    if (primerLanzamiento)
+                    {
+                        while (lanzamientos[l] == 1)
+                        {
+                            lanzamientos[l] = lanzarDado();
+                        }
+                    }
+
                     // Determinamos la presencia de Ases.
                     if (lanzamientos[l] == 1)
                     {
@@ -253,6 +273,9 @@ namespace juego
                      */
                     todosIguales = ant == lanzamientos[l] && todosIguales;
                 }
+
+                // Quitamos la restricción.
+                primerLanzamiento = false;
 
                 // Acumulamos los valores de los dados involucrados en el tiro.
                 for (int i = 0; i < cantDados; i++)

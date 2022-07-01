@@ -29,6 +29,10 @@ namespace utils
 \____/ \____/   \_/  \_| |_/|___/  |_|\____/   \_/   \___/  \____/\_| |_/\____/_
 )";
 
+    const char *CARITA = R"(
+        ¯\_(ツ)_/¯
+    )";
+
     struct PuntajesFinales
     {
         int masTrufasEnTotal;
