@@ -96,19 +96,8 @@ namespace juego
          * El juagador con mayor puntaje total, gana 5 PDV.
          * En caso de empate, ambos acumulan 5 PDV.
          */
-        if (jug1->puntaje > jug2->puntaje)
-        {
-            jug1->puntajesFinales.masTrufasEnTotal += 5;
-        }
-        else if (jug2->puntaje > jug1->puntaje)
-        {
-            jug2->puntajesFinales.masTrufasEnTotal += 5;
-        }
-        else
-        {
-            jug1->puntajesFinales.masTrufasEnTotal += 5;
-            jug2->puntajesFinales.masTrufasEnTotal += 5;
-        }
+        jug1->puntajesFinales.masTrufasEnTotal += jug1->puntaje >= jug2->puntaje ? 5 : 0;
+        jug2->puntajesFinales.masTrufasEnTotal += jug2->puntaje >= jug1->puntaje ? 5 : 0;
 
         /**
          * Acumulan 1 PDV por cada 50 trufas recolectadas durante las rondas.
@@ -125,19 +114,8 @@ namespace juego
         /**
          * Ganan 3 PDV si fueron los que mas lanzamientos seguidos han realizado o si empataron en la cantidad.
          */
-        if (jug1->mayorCantLanzamientosSeguidos > jug2->mayorCantLanzamientosSeguidos)
-        {
-            jug1->puntajesFinales.porCodicioso += 3;
-        }
-        else if (jug2->mayorCantLanzamientosSeguidos > jug1->mayorCantLanzamientosSeguidos)
-        {
-            jug2->puntajesFinales.porCodicioso += 3;
-        }
-        else
-        {
-            jug1->puntajesFinales.porCodicioso += 3;
-            jug2->puntajesFinales.porCodicioso += 3;
-        }
+        jug1->puntajesFinales.porCodicioso += jug1->mayorCantLanzamientosSeguidos >= jug2->mayorCantLanzamientosSeguidos ? 3 : 0;
+        jug2->puntajesFinales.porCodicioso += jug2->mayorCantLanzamientosSeguidos >= jug1->mayorCantLanzamientosSeguidos ? 3 : 0;
 
         utils::cls();
 
