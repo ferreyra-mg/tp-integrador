@@ -92,6 +92,10 @@ namespace juego
         utils::Jugador *jug1 = &jugadores[0];
         utils::Jugador *jug2 = &jugadores[1];
 
+        /**
+         * El juagador con mayor puntaje total, gana 5 PDV.
+         * En caso de empate, ambos acumulan 5 PDV.
+         */
         if (jug1->puntaje > jug2->puntaje)
         {
             jug1->puntajesFinales.masTrufasEnTotal += 5;
@@ -106,12 +110,21 @@ namespace juego
             jug2->puntajesFinales.masTrufasEnTotal += 5;
         }
 
+        /**
+         * Acumulan 1 PDV por cada 50 trufas recolectadas durante las rondas.
+         */
         jug1->puntajesFinales.cada50Trufas = 1 * (jug1->puntaje / 50);
         jug2->puntajesFinales.cada50Trufas = 1 * (jug2->puntaje / 50);
 
+        /**
+         * Acumulan 2 PDV por cada OINK que hayan conseguido durante las rondas.
+         */
         jug1->puntajesFinales.porOinks = 2 * jug1->oinks;
         jug2->puntajesFinales.porOinks = 2 * jug2->oinks;
 
+        /**
+         * Ganan 3 PDV si fueron los que mas lanzamientos seguidos han realizado o si empataron en la cantidad.
+         */
         if (jug1->mayorCantLanzamientosSeguidos > jug2->mayorCantLanzamientosSeguidos)
         {
             jug1->puntajesFinales.porCodicioso += 3;
@@ -128,6 +141,9 @@ namespace juego
 
         utils::cls();
 
+        /**
+         * Sumo los PDVs conseguidos segun las reglas anteriores.
+         */
         int totales[2];
 
         jug1->puntajesFinales.pdv = 0;
@@ -143,6 +159,9 @@ namespace juego
         jug2->puntajesFinales.pdv += jug2->puntajesFinales.porCodicioso;
         jug2->puntajesFinales.pdv += jug2->puntajesFinales.porOinks;
 
+        /**
+         * Resultados finales...
+         */
         cout << "+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -+" << endl;
         cout << "+                   Puntajes Finales                        +" << endl;
         cout << "+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -+" << endl;
@@ -181,10 +200,8 @@ namespace juego
 
     void jugar()
     {
-        int numRonda = 0;
+        // Controla la cantidad de dados con la que se va jugando durante las rondas.
         int cantDados = 2;
-
-        inicializarJugadores();
 
         // Guardo el Jugador actual.
         utils::Jugador *jug1 = &jugadores[sigAJugar];
@@ -192,25 +209,40 @@ namespace juego
 
         do
         {
+            // Incremento el acumulador de rondas para el jugador actual.
             jug1->rondaActual += 1;
+
+            // Inicio las variables del jugador para la ronda actual.
             int cantLanzamientosRondaActual = 0;
 
+            // Flag para controlar si el jugador continua con la ronda actual o si continúa el otro jugador.
             bool seguir = true;
 
+            // Acumula los puntos de la ronda.
             int acumTotal = 0;
 
             do
             {
+                // Actualizo contador de lanzamientos en ronda actual.
                 cantLanzamientosRondaActual += 1;
 
-                int lanzamientos[3];
+                // Acumula la cantidad de puntos en lanzamiento actual.
                 int acum = 0;
+
+                // Guarda los lanzamientos obtenidos.
+                int lanzamientos[3];
+
+                // Para control posterior de las reglas del juego en cuanto a puntos.
                 int ant = 0;
                 bool hayAs = false;
                 bool todosAses = false;
                 bool todosIguales = true;
+
+                // Resultados donde se produce una cambio en las reglas del juego.
                 bool hundido = false;
                 bool oink = false;
+
+                // Variables auxiliares usadas en mensajes que se muestran al jugador al terminar el lanzamiento actual.
                 bool cedePuntos = false;
                 bool cedeTurno = false;
 
@@ -219,6 +251,7 @@ namespace juego
 
                 for (int l = 0; l < cantDados; l++)
                 {
+                    // Lanzo el dado.
                     lanzamientos[l] = lanzarDado();
 
                     // Determinamos la presencia de Ases.
@@ -292,16 +325,25 @@ namespace juego
                     // Las caras son distintas, pero hay un as.
                     if (hayAs)
                     {
+                        // Pierde lo obtenido durante el lanzamiento actual.
                         acum = 0;
+                        // Pierde los acumulado durante la ronda.
                         acumTotal = 0;
+
+                        // Cede el turno y no puede seguir.
                         seguir = false;
                         cedeTurno = true;
                     }
                 }
 
+                // Acumula lo que pudo o no obtener en el lanzamiento actual.
                 acumTotal += acum;
 
                 utils::cls();
+
+                /**
+                 * Muestro la información General de la partida.
+                 */
                 cout << jugadores[0].alias << ": " << jugadores[0].puntaje << " trufas acumuladas.\t";
                 cout << jugadores[1].alias << ": " << jugadores[1].puntaje << " trufas acumuladas." << endl;
 
@@ -318,15 +360,18 @@ namespace juego
                 cout << "LANZAMIENTO # " << cantLanzamientosRondaActual << "\n"
                      << endl;
 
+                /**
+                 * Paso los lanzamientos obtenidos para mostrarlos de
+                 * manera 'bonita'.
+                 */
                 utils::pintarDados(lanzamientos);
+
                 cout << endl;
 
                 if (acum > 0)
                 {
-                    cout << "ACUMULASTE " << acum << " TRUFAS EN ESTE LANZAMIENTO !!!";
+                    cout << "ACUMULASTE " << acum << " TRUFAS EN ESTE LANZAMIENTO !!!" << endl;
                 }
-
-                cout << endl;
 
                 /**
                  * El jugador actual puede decidir si continúa
@@ -347,6 +392,7 @@ namespace juego
                 // Acá ya sea por decisión del usuario o por penalización, se cambia de jugador.
                 if (!seguir)
                 {
+                    // Muestro mensaje indicando el motivo de que haya perdido el turno y sus consecuencias.
                     if (hundido || cedeTurno)
                     {
                         string str = "";
@@ -366,11 +412,16 @@ namespace juego
 
                         if (jug1->rondaActual < 5 && jug2->rondaActual < 5)
                         {
-                            cout << "En 3 segundos continuamos con el próximo tiro..." << endl;
+                            cout << "\nEn 3 segundos continuamos con el próximo tiro..." << endl;
                             sleep(3);
                         }
                     }
 
+                    /**
+                     * Corroboro contra el jugador si la seguidilla de lanzamientos actual es la mayor marca.
+                     * Según entiendo la mejor marca se lleva de manera individual y luego es comparada entre
+                     * ambos jugadores una vez finalizadas todas las rondas.
+                     */
                     if (jug1->mayorCantLanzamientosSeguidos < cantLanzamientosRondaActual)
                         jug1->mayorCantLanzamientosSeguidos = cantLanzamientosRondaActual;
 
@@ -380,11 +431,16 @@ namespace juego
                     // Intercambio quién continua.
                     sigAJugar = sigAJugar == 0 ? 1 : 0;
 
-                    // Piso los valores referenciados.
+                    // E intercambio también los valores referenciados.
                     jug1 = &jugadores[sigAJugar];
                     jug2 = &jugadores[sigAJugar == 0 ? 1 : 0];
                 }
 
+                /**
+                 * En el caso de que se esté aún jugando con dos dados y alguno de los
+                 * jugadores termine la ronda con 50 puntos o mas -> la próxima ronda se
+                 * juega con 3 dados.
+                 */
                 if (cantDados == 2 && (jug1->puntaje >= 50 || jug2->puntaje >= 50))
                 {
                     cantDados = 3;
@@ -396,6 +452,10 @@ namespace juego
 
         } while (jug1->rondaActual < 5 || jug2->rondaActual < 5);
 
+        /**
+         * Ambos jugadores finalizaron todas sus rondas,
+         * por lo que calculo y muestros los puntos acumulados.
+         */
         calcularMostrarResultados();
     }
 
@@ -406,14 +466,10 @@ namespace juego
         cout << "Ingrese el alias del primer jugador: ";
         cin >> jugadores[0].alias;
         jugadores[0].alias = utils::toUpper(jugadores[0].alias);
-        jugadores[0].puntaje = 0;
-        jugadores[0].rondaActual = 0;
 
         cout << "Ingrese el alias del segundo jugador: ";
         cin >> jugadores[1].alias;
         jugadores[1].alias = utils::toUpper(jugadores[1].alias);
-        jugadores[1].puntaje = 0;
-        jugadores[1].rondaActual = 0;
 
         determinarOrdenJugadores();
 
@@ -426,6 +482,9 @@ namespace juego
 
         if (toupper(opc) != 'S')
             return;
+
+        // Coloco valores por defecto en los jugadores.
+        inicializarJugadores();
 
         utils::cls();
 
