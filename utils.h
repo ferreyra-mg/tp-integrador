@@ -42,6 +42,15 @@ namespace utils
         int pdv;
     };
 
+    struct Marcas
+    {
+        char masTrufasEnTotal;
+        char cada50Trufas;
+        char porOinks;
+        char porCodicioso;
+        char pdv;
+    };
+
     struct Jugador
     {
         string alias;
@@ -51,6 +60,8 @@ namespace utils
         int mayorCantLanzamientosSeguidos;
         int oinks;
         PuntajesFinales puntajesFinales;
+        int mayorCantidadTrufasEnUnLanzamiento;
+        Marcas marcas;
     };
 
     void pig(string msg = "")

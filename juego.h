@@ -116,6 +116,64 @@ namespace juego
         jug1->puntajesFinales.porCodicioso += jug1->mayorCantLanzamientosSeguidos >= jug2->mayorCantLanzamientosSeguidos ? 3 : 0;
         jug2->puntajesFinales.porCodicioso += jug2->mayorCantLanzamientosSeguidos >= jug1->mayorCantLanzamientosSeguidos ? 3 : 0;
 
+        bool hayMaxrrano = jug1->mayorCantidadTrufasEnUnLanzamiento != jug2->mayorCantidadTrufasEnUnLanzamiento;
+
+        if (hayMaxrrano)
+        {
+            if (jug1->mayorCantidadTrufasEnUnLanzamiento > jug2->mayorCantidadTrufasEnUnLanzamiento)
+            {
+                if (jug2->puntajesFinales.masTrufasEnTotal > jug1->puntajesFinales.masTrufasEnTotal)
+                {
+                    jug2->puntajesFinales.masTrufasEnTotal -= 1;
+                    jug2->marcas.masTrufasEnTotal = '*';
+                }
+
+                if (jug2->puntajesFinales.cada50Trufas > jug1->puntajesFinales.cada50Trufas)
+                {
+                    jug2->puntajesFinales.cada50Trufas -= 1;
+                    jug2->marcas.cada50Trufas = '*';
+                }
+
+                if (jug2->puntajesFinales.porCodicioso > jug1->puntajesFinales.porCodicioso)
+                {
+                    jug2->puntajesFinales.porCodicioso -= 1;
+                    jug2->marcas.porCodicioso = '*';
+                }
+
+                if (jug2->puntajesFinales.porOinks > jug1->puntajesFinales.porOinks)
+                {
+                    jug2->puntajesFinales.porOinks -= 1;
+                    jug2->marcas.porOinks = '*';
+                }
+            }
+            else
+            {
+                if (jug1->puntajesFinales.masTrufasEnTotal > jug2->puntajesFinales.masTrufasEnTotal)
+                {
+                    jug1->puntajesFinales.masTrufasEnTotal -= 1;
+                    jug1->marcas.masTrufasEnTotal = '*';
+                }
+
+                if (jug1->puntajesFinales.cada50Trufas > jug2->puntajesFinales.cada50Trufas)
+                {
+                    jug1->puntajesFinales.cada50Trufas -= 1;
+                    jug1->marcas.cada50Trufas = '*';
+                }
+
+                if (jug1->puntajesFinales.porCodicioso > jug2->puntajesFinales.porCodicioso)
+                {
+                    jug1->puntajesFinales.porCodicioso -= 1;
+                    jug1->marcas.porCodicioso = '*';
+                }
+
+                if (jug1->puntajesFinales.porOinks > jug2->puntajesFinales.porOinks)
+                {
+                    jug1->puntajesFinales.porOinks -= 1;
+                    jug1->marcas.porOinks = '*';
+                }
+            }
+        }
+
         utils::cls();
 
         /**
@@ -125,6 +183,12 @@ namespace juego
 
         jug1->puntajesFinales.pdv = 0;
         jug2->puntajesFinales.pdv = 0;
+
+        if (hayMaxrrano)
+        {
+            jug1->puntajesFinales.pdv += jug1->mayorCantidadTrufasEnUnLanzamiento > jug2->mayorCantidadTrufasEnUnLanzamiento ? 1 : 0;
+            jug2->puntajesFinales.pdv += jug2->mayorCantidadTrufasEnUnLanzamiento > jug1->mayorCantidadTrufasEnUnLanzamiento ? 1 : 0;
+        }
 
         jug1->puntajesFinales.pdv += jug1->puntajesFinales.cada50Trufas;
         jug1->puntajesFinales.pdv += jug1->puntajesFinales.masTrufasEnTotal;
@@ -143,16 +207,30 @@ namespace juego
         cout << "+                   Puntajes Finales                        +" << endl;
         cout << "+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -+" << endl;
         cout << " Hito\t\t\t\t" + jug1->alias + "\t\t" + jug2->alias << endl;
-        cout << " Más trufas en total\t\t" + std::to_string(jug1->puntajesFinales.masTrufasEnTotal) + "\t\t" + std::to_string(jug2->puntajesFinales.masTrufasEnTotal) << endl;
-        cout << " Cada 50 trufas\t\t\t" + std::to_string(jug1->puntajesFinales.cada50Trufas) + "\t\t" + std::to_string(jug2->puntajesFinales.cada50Trufas) << endl;
-        cout << " Oinks\t\t\t\t" + std::to_string(jug1->puntajesFinales.porOinks) + "\t\t" + std::to_string(jug2->puntajesFinales.porOinks) << endl;
-        cout << " Cerdo codicioso\t\t" + std::to_string(jug1->puntajesFinales.porCodicioso) + "\t\t" + std::to_string(jug2->puntajesFinales.porCodicioso) << endl;
+        cout << " Más trufas en total\t\t" + std::to_string(jug1->puntajesFinales.masTrufasEnTotal) + " PDV " << jug1->marcas.masTrufasEnTotal
+             << "\t\t" + std::to_string(jug2->puntajesFinales.masTrufasEnTotal) << " PDV " << jug2->marcas.masTrufasEnTotal << endl;
+        cout << " Cada 50 trufas\t\t\t" + std::to_string(jug1->puntajesFinales.cada50Trufas) + " PDV " << jug1->marcas.cada50Trufas
+             << "\t\t" + std::to_string(jug2->puntajesFinales.cada50Trufas) << " PDV " << jug2->marcas.cada50Trufas << endl;
+        cout << " Oinks\t\t\t\t" + std::to_string(jug1->puntajesFinales.porOinks) + " PDV " << jug1->marcas.porOinks
+             << "\t\t" + std::to_string(jug2->puntajesFinales.porOinks) << " PDV " << jug2->marcas.porOinks << endl;
+        cout << " Cerdo codicioso\t\t" + std::to_string(jug1->puntajesFinales.porCodicioso) + " PDV " << jug1->marcas.porCodicioso
+             << "\t\t" + std::to_string(jug2->puntajesFinales.porCodicioso) << " PDV " << jug2->marcas.porCodicioso << endl;
+        if (hayMaxrrano)
+        {
+            cout << " Maxrrano\t\t\t" + std::to_string(jug1->mayorCantidadTrufasEnUnLanzamiento > jug2->mayorCantidadTrufasEnUnLanzamiento ? 1 : 0) + " PDV"
+                 << "\t\t" + std::to_string(jug2->mayorCantidadTrufasEnUnLanzamiento > jug1->mayorCantidadTrufasEnUnLanzamiento ? 1 : 0) << " PDV" << endl;
+        }
         cout << "+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - -+" << endl;
-        cout << "TOTAL\t\t\t\t" + std::to_string(jug1->puntajesFinales.pdv) + "\t\t" + std::to_string(jug2->puntajesFinales.pdv) << endl;
+        cout << "TOTAL\t\t\t\t" + std::to_string(jug1->puntajesFinales.pdv) + " PDV\t\t" + std::to_string(jug2->puntajesFinales.pdv) << " PDV" << endl;
 
         cout << endl
              << endl;
         utils::pig("EL GANADOR ES " + (jug1->puntajesFinales.pdv > jug2->puntajesFinales.pdv ? jug1->alias : jug2->alias));
+
+        if (hayMaxrrano)
+        {
+            cout << "* - Se descontó 1 PDV" << endl;
+        }
 
         chequearMejorJugador(jug1->puntajesFinales.pdv > jug2->puntajesFinales.pdv ? jug1 : jug2);
 
@@ -165,12 +243,18 @@ namespace juego
         {
             jugadores[i].oinks = 0;
             jugadores[i].mayorCantLanzamientosSeguidos = 0;
+            jugadores[i].mayorCantidadTrufasEnUnLanzamiento = 0;
             jugadores[i].puntaje = 0;
             jugadores[i].rondaActual = 0;
             jugadores[i].puntajesFinales.cada50Trufas = 0;
             jugadores[i].puntajesFinales.masTrufasEnTotal = 0;
             jugadores[i].puntajesFinales.porCodicioso = 0;
             jugadores[i].puntajesFinales.porOinks = 0;
+
+            jugadores[i].marcas.masTrufasEnTotal = ' ';
+            jugadores[i].marcas.cada50Trufas = ' ';
+            jugadores[i].marcas.porCodicioso = ' ';
+            jugadores[i].marcas.porOinks = ' ';
         }
     }
 
@@ -339,6 +423,10 @@ namespace juego
 
                 // Acumula lo que pudo o no obtener en el lanzamiento actual.
                 acumTotal += acum;
+
+                // Llevo la cuenta de cual es el valor máximo de trufas obtenidas en todos los lanzamientos de cada jugador.
+                if (acum > jug1->mayorCantidadTrufasEnUnLanzamiento)
+                    jug1->mayorCantidadTrufasEnUnLanzamiento = acum;
 
                 utils::cls();
 
