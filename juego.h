@@ -197,6 +197,8 @@ namespace juego
 
             bool seguir = true;
 
+            int acumTotal = 0;
+
             do
             {
                 cantLanzamientosRondaActual += 1;
@@ -270,6 +272,7 @@ namespace juego
 
                         // pierde todos los puntos actuales y acumulados...
                         acum = 0;
+                        acumTotal = 0;
                         jug1->puntaje = 0;
                         // Cede automaticamente el turno.
                         seguir = false;
@@ -290,12 +293,13 @@ namespace juego
                     if (hayAs)
                     {
                         acum = 0;
+                        acumTotal = 0;
                         seguir = false;
                         cedeTurno = true;
                     }
                 }
 
-                jug1->puntaje += acum;
+                acumTotal += acum;
 
                 utils::cls();
                 cout << jugadores[0].alias << ": " << jugadores[0].puntaje << " trufas acumuladas.\t";
@@ -306,9 +310,12 @@ namespace juego
 
                 cout << "+--------------------------+" << endl;
                 cout << " RONDAS # " << jug1->rondaActual << endl;
-                cout << " TRUFAS DE LA RONDA : " << acum << endl;
-                cout << " LANZAMIENTOS : " << cantLanzamientosRondaActual << endl;
+                cout << " TRUFAS DE LA RONDA : " << acumTotal << endl;
+                cout << " LANZAMIENTOS : " << cantLanzamientosRondaActual - 1 << endl;
                 cout << "+--------------------------+\n"
+                     << endl;
+
+                cout << "LANZAMIENTO # " << cantLanzamientosRondaActual << "\n"
                      << endl;
 
                 utils::pintarDados(lanzamientos);
@@ -316,7 +323,7 @@ namespace juego
 
                 if (acum > 0)
                 {
-                    cout << "SUMASTE " << acum << " TRUFAS !!!";
+                    cout << "ACUMULASTE " << acum << " TRUFAS EN ESTE LANZAMIENTO !!!";
                 }
 
                 cout << endl;
@@ -367,14 +374,15 @@ namespace juego
                     if (jug1->mayorCantLanzamientosSeguidos < cantLanzamientosRondaActual)
                         jug1->mayorCantLanzamientosSeguidos = cantLanzamientosRondaActual;
 
+                    // Acumulo los puntos acumulados en la ronda si los hubiese.
+                    jug1->puntaje += acumTotal;
+
                     // Intercambio quién continua.
                     sigAJugar = sigAJugar == 0 ? 1 : 0;
 
                     // Piso los valores referenciados.
                     jug1 = &jugadores[sigAJugar];
                     jug2 = &jugadores[sigAJugar == 0 ? 1 : 0];
-
-                    // jug1->rondaActual += 1;
                 }
 
                 if (cantDados == 2 && (jug1->puntaje >= 50 || jug2->puntaje >= 50))
